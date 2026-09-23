@@ -184,9 +184,16 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
                         <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #f0f0f0", padding: "24px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
                                 <div style={{ width: "28px", height: "28px", borderRadius: "8px", backgroundColor: "#ff7300", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <i className="pi pi-map-marker" style={{ color: "#ffffff", fontSize: "0.75rem" }} />
+                                    <i className="pi pi-map-marker" style=
+                                    {{ color: "#ffffff", fontSize: "0.75rem" }} />
                                 </div>
-                                <h3 style={{ fontSize: "0.875rem", fontWeight: "bold", color: "#000000", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>Contato e Localização</h3>
+                                <h3 style={{ fontSize: "0.875rem", 
+                                    fontWeight: "bold", 
+                                    color: "#000000", 
+                                    textTransform: "uppercase", 
+                                    letterSpacing: "0.05em", 
+                                    margin: 0 
+                                    }}>Contato e Localização</h3>
                             </div>
 
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
