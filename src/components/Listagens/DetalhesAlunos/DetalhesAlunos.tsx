@@ -86,6 +86,7 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
     };
 
     const iniciais = `${aluno.nome?.charAt(0) ?? ""}${aluno.sobrenome?.charAt(0) ?? ""}`.toUpperCase();
+    console.log("aluno:", aluno);
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "#f3f4f6", padding: "32px 16px" }}>
@@ -185,14 +186,22 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
                                 <div style={{ width: "28px", height: "28px", borderRadius: "8px", backgroundColor: "#ff7300", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                     <i className="pi pi-map-marker" style=
-                                    {{ color: "#ffffff", fontSize: "0.75rem" }} />
+                                    
+                                        {{ color: "#ffffff", fontSize: "0.75rem" }} />
                                 </div>
-                                <h3 style={{ fontSize: "0.875rem", 
+                                <h3 style={{
+                                    fontSize: "0.875rem", 
+                                   
                                     fontWeight: "bold", 
+                                   
                                     color: "#000000", 
+                                   
                                     textTransform: "uppercase", 
+                                   
                                     letterSpacing: "0.05em", 
-                                    margin: 0 
+                                   
+                                    margin: 0
+                                
                                     }}>Contato e Localização</h3>
                             </div>
 
