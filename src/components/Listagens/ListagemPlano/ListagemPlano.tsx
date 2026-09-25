@@ -122,13 +122,16 @@ function ListagemPlanos(): JSX.Element {
                     </thead>
                     <tbody>
                         {currentPlanos.length > 0 ? (
-                            currentPlanos.map((plano, index) => (
+                            currentPlanos.map((plano, index) => {
+                                const codigoExibicao = indexOfFirstRow + index + 1;
+
+                                return (
                                 <tr
                                     key={plano.cod_plano ?? index}
                                     onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#fff8f5')}
                                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#fff')}
                                 >
-                                    <td style={tdStyle}>{plano.cod_plano ?? '—'}</td>
+                                    <td style={tdStyle}>{codigoExibicao}</td>
                                     <td style={{ ...tdStyle, fontWeight: 500 }}>{plano.tipo_plano}</td>
                                     <td style={tdStyle}>{plano.duracao_dias} dias</td>
                                     <td style={{ ...tdStyle, fontWeight: 700 }}>
@@ -168,7 +171,8 @@ function ListagemPlanos(): JSX.Element {
                                         </div>
                                     </td>
                                 </tr>
-                            ))
+                                );
+                            })
                         ) : (
                             <tr>
                                 <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#999' }}>

@@ -122,13 +122,16 @@ function ListagemMatriculas(): JSX.Element {
                     </thead>
                     <tbody>
                         {currentMatriculas.length > 0 ? (
-                            currentMatriculas.map((matricula, index) => (
+                            currentMatriculas.map((matricula, index) => {
+                                const codigoExibicao = indexOfFirstRow + index + 1;
+
+                                return (
                                 <tr
                                     key={matricula.cod_matricula ?? index}
                                     onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#fff8f5')}
                                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#fff')}
                                 >
-                                    <td style={tdStyle}>{matricula.cod_matricula ?? '—'}</td>
+                                    <td style={tdStyle}>{codigoExibicao}</td>
                                     <td style={tdStyle}>
                                         {formatarData(matricula.data_inicio)} → {formatarData(matricula.data_fim)}
                                     </td>
@@ -170,7 +173,8 @@ function ListagemMatriculas(): JSX.Element {
                                         </div>
                                     </td>
                                 </tr>
-                            ))
+                                );
+                            })
                         ) : (
                             <tr>
                                 <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
