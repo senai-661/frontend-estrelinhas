@@ -1,5 +1,7 @@
 import { useState, useEffect, type JSX } from "react";
 import MatriculaRequests from "../../../fetch/MatriculaRequests";
+import AlunoRequests from "../../../fetch/AlunoRequests";
+import PlanoRequests from "../../../fetch/PlanoRequests";
 import type { MatriculaDTO } from "../../../dto/MatriculaDTO";
 import { useNavigate } from "react-router-dom";
 
@@ -13,9 +15,31 @@ function ListagemMatriculas(): JSX.Element {
     useEffect(() => {
         const buscarMatriculas = async () => {
             try {
-                const lista = await MatriculaRequests.obterListaDeMatriculas();
-            
-                setMatriculas(Array.isArray(lista) ? lista : []);
+                const [lista, alunos, planos] = await Promise.all([
+                    MatriculaRequests.obterListaDeMatriculas(),
+                    AlunoRequests.obterListaDeAlunos(),
+                    PlanoRequests.obterListaDePlanos(),
+                ]);
+
+                const alunosPorId = new Map<string, string>();
+                alunos.forEach((aluno) => {
+                    const nome = `${aluno.nome} ${aluno.sobrenome}`.trim();
+                    if (aluno.idAluno !== undefined) alunosPorId.set(String(aluno.idAluno), nome);
+                    if (aluno.codAluno) alunosPorId.set(String(aluno.codAluno), nome);
+                });
+
+                const planosPorId = new Map<string, string>();
+                planos.forEach((plano) => {
+                    planosPorId.set(String(plano.cod_plano), plano.tipo_plano);
+                });
+
+                const matriculasComNomes = (Array.isArray(lista) ? lista : []).map((matricula) => ({
+                    ...matricula,
+                    nome_aluno: matricula.nome_aluno ?? alunosPorId.get(String(matricula.id_aluno)),
+                    nome_plano: matricula.nome_plano ?? planosPorId.get(String(matricula.id_plano)),
+                }));
+
+                setMatriculas(matriculasComNomes);
             } catch (error) {
                 console.error(`Erro ao buscar matrículas. ${error}`);
                 alert("Erro ao criar a listagem de matrículas.");
@@ -113,9 +137,8 @@ function ListagemMatriculas(): JSX.Element {
                     <thead>
                         <tr>
                             <th style={thStyle}>Cód. Matrícula</th>
-                            <th style={thStyle}>Vigência</th>
-                            <th style={thStyle}>Valor Final</th>
-                            <th style={thStyle}>Forma Pgto.</th>
+                            <th style={thStyle}>Aluno</th>
+                            <th style={thStyle}>Plano</th>
                             <th style={thStyle}>Status</th>
                             <th style={{ ...thStyle, textAlign: 'center' }}>Ações</th>
                         </tr>
@@ -129,13 +152,8 @@ function ListagemMatriculas(): JSX.Element {
                                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#fff')}
                                 >
                                     <td style={tdStyle}>{matricula.cod_matricula ?? '—'}</td>
-                                    <td style={tdStyle}>
-                                        {formatarData(matricula.data_inicio)} → {formatarData(matricula.data_fim)}
-                                    </td>
-                                    <td style={{ ...tdStyle, fontWeight: 700 }}>
-                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(matricula.valor_final)}
-                                    </td>
-                                    <td style={tdStyle}>{matricula.forma_pagamento ?? '—'}</td>
+                                    <td style={tdStyle}>{matricula.nome_aluno ?? '—'}</td>
+                                    <td style={tdStyle}>{matricula.nome_plano ?? '—'}</td>
                                     <td style={tdStyle}>
                                         <span style={{
                                             backgroundColor: (matricula.status_matricula?.toUpperCase() === 'ATIVA' || matricula.status_matricula?.toUpperCase() === 'ATIVO') ? '#dcfce7' : '#fee2e2',
@@ -173,7 +191,7 @@ function ListagemMatriculas(): JSX.Element {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                                <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
                                     Nenhuma matrícula encontrada
                                 </td>
                             </tr>

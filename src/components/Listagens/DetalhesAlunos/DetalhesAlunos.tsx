@@ -151,7 +151,6 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
 
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                                 <Campo label="ID do Sistema" valor={String(aluno.idAluno ?? "—")} icone="pi-hashtag" />
-                                <Campo label="CPF" valor={aluno.cpf ?? "Não informado"} icone="pi-file" />
                                 <Campo label="Data de Nascimento" valor={formatarData(aluno.dataNascimento)} icone="pi-calendar" />
                             </div>
                         </div>
@@ -195,30 +194,6 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
                                 <Campo label="Celular / Telefone" valor={aluno.celular ?? "Não informado"} icone="pi-phone" />
                                 <div style={{ gridColumn: "1 / -1" }}>
                                     <Campo label="Endereço Residencial" valor={aluno.endereco ?? "Não informado"} icone="pi-home" />
-                                    {/* Card do Plano */}
-                                    <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #f0f0f0", padding: "24px" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-                                            <div style={{ width: "28px", height: "28px", borderRadius: "8px", backgroundColor: "#ff7300", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <i className="pi pi-credit-card" style={{ color: "#ffffff", fontSize: "0.75rem" }} />
-                                            </div>
-                                            <h3 style={{ fontSize: "0.875rem", fontWeight: "bold", color: "#000000", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>Plano Atual</h3>
-                                        </div>
-
-                                        {aluno.tipoPlano ? (
-                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                                                <Campo label="Plano" valor={aluno.tipoPlano} icone="pi-tag" />
-                                                <Campo label="Código da Matrícula" valor={aluno.codMatricula ?? "—"} icone="pi-hashtag" />
-                                                <Campo label="Início" valor={formatarData(aluno.dataInicio!)} icone="pi-calendar" />
-                                                <Campo label="Vencimento" valor={formatarData(aluno.dataFim!)} icone="pi-calendar-times" />
-                                                <Campo label="Valor" valor={aluno.valorFinal ? `R$ ${Number(aluno.valorFinal).toFixed(2)}` : "—"} icone="pi-dollar" />
-                                                <Campo label="Forma de Pagamento" valor={aluno.formaPagamento ?? "—"} icone="pi-wallet" />
-                                            </div>
-                                        ) : (
-                                            <div style={{ padding: "16px", borderRadius: "10px", backgroundColor: "#f9f9f9", textAlign: "center" }}>
-                                                <span style={{ fontSize: "0.875rem", color: "#999999" }}>Nenhum plano ativo no momento.</span>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -3,14 +3,16 @@ import { MatriculaDTO } from "../dto/MatriculaDTO";
 // Função auxiliar para mapear o objeto do backend para o DTO
 function mapearMatricula(item: any): MatriculaDTO {
     return {
-        cod_matricula: item.idMatricula,
-        id_aluno: item.codAluno,
-        id_plano: item.codPlano,
-        data_inicio: item.dataMatricula,
-        data_fim: item.dataVencimento,
-        status_matricula: item.statusMatricula,
-        forma_pagamento: item.formaPagamento,
-        valor_final: parseFloat(item.valorPago),
+        cod_matricula: item.idMatricula ?? item.id_matricula ?? item.cod_matricula,
+        id_aluno: item.idAluno ?? item.id_aluno ?? item.codAluno ?? item.cod_aluno,
+        id_plano: item.idPlano ?? item.id_plano ?? item.codPlano ?? item.cod_plano,
+        nome_aluno: item.nomeAluno ?? item.nome_aluno ?? item.aluno_nome ?? item.aluno,
+        nome_plano: item.nomePlano ?? item.nome_plano ?? item.plano_nome ?? item.tipoPlano ?? item.tipo_plano ?? item.plano,
+        data_inicio: item.dataMatricula ?? item.data_matricula ?? item.data_inicio,
+        data_fim: item.dataVencimento ?? item.data_vencimento ?? item.data_fim,
+        status_matricula: item.statusMatricula ?? item.status_matricula,
+        forma_pagamento: item.formaPagamento ?? item.forma_pagamento,
+        valor_final: Number(item.valorPago ?? item.valor_pago ?? item.valor_final),
     };
 }
 

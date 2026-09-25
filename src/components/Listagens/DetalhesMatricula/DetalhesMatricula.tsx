@@ -1,6 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import MatriculaRequests from "../../../fetch/MatriculaRequests";
+import AlunoRequests from "../../../fetch/AlunoRequests";
 
 interface DetalhesMatriculaProps {
     idMatricula: number;
@@ -25,7 +26,13 @@ function DetalhesMatricula({ idMatricula }: DetalhesMatriculaProps): JSX.Element
             try {
                 const dados = await MatriculaRequests.obterMatriculaPorId(idMatricula);
                 if (dados) {
-                    setMatricula(dados);
+                    const aluno = dados.nome_aluno
+                        ? null
+                        : await AlunoRequests.obterAlunoPorId(Number(dados.id_aluno));
+                    setMatricula({
+                        ...dados,
+                        nome_aluno: dados.nome_aluno ?? (aluno ? `${aluno.nome} ${aluno.sobrenome}` : undefined),
+                    });
                 } else {
                     setError("Matrícula não encontrada.");
                 }
@@ -149,6 +156,7 @@ function DetalhesMatricula({ idMatricula }: DetalhesMatriculaProps): JSX.Element
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                                 <Campo label="ID da Matrícula" valor={String(matricula.cod_matricula)} icone="pi-hashtag" />
                                 <Campo label="Status" valor={matricula.status_matricula ?? "—"} icone="pi-info-circle" />
+                                <Campo label="Nome do Aluno" valor={matricula.nome_aluno ?? "—"} icone="pi-user" />
                                 <Campo label="ID do Aluno" valor={String(matricula.id_aluno)} icone="pi-user" />
                                 <Campo label="ID do Plano" valor={String(matricula.id_plano)} icone="pi-book" />
                             </div>
