@@ -17,15 +17,25 @@ function LoginForm(): JSX.Element {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const login: LoginData = { email: email, senha: senha }
 
-  
+        const emailSanitizado = email.trim();
+        const senhaSanitizada = senha.trim();
+
+        if (!emailSanitizado || !senhaSanitizada) {
+            alert('Informe o e-mail e a senha para continuar.');
+            return;
+        }
+
+        const login: LoginData = {
+            email: emailSanitizado,
+            senha: senhaSanitizada,
+        };
+
         try {
             if (await AuthRequests.login(login)) {
-                window.location.href = '/'; 
+                window.location.href = '/';
             }
         } catch (error) {
-           
             console.error(`Erro ao tentar fazer login: ${error}`);
             alert('Erro ao fazer login, verifique se usuário e/ou senha estão corretos.');
         }
