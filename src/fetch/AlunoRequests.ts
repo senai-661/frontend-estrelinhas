@@ -1,4 +1,29 @@
 import type { AlunoDTO } from "../dto/AlunoDTO";
+
+export const normalizarAlunoDetalhes = (raw: any): AlunoDTO => ({
+    idAluno: raw?.idAluno ?? raw?.id_aluno ?? raw?.id,
+    codAluno: raw?.codAluno ?? raw?.cod_aluno ?? raw?.cod,
+    nome: raw?.nome ?? "",
+    sobrenome: raw?.sobrenome ?? "",
+    cpf: raw?.cpf ?? "",
+    dataNascimento: raw?.dataNascimento ?? raw?.data_nascimento,
+    celular: raw?.celular ?? "",
+    statusAluno: raw?.statusAluno ?? raw?.status_aluno ?? "",
+    endereco: raw?.endereco ?? "",
+    email: raw?.email ?? "",
+    codPlano: raw?.codPlano ?? raw?.cod_plano,
+    tipoPlano: raw?.tipoPlano ?? raw?.tipo_plano,
+    duracaoDias: raw?.duracaoDias ?? raw?.duracao_dias,
+    valorPlano: raw?.valorPlano ?? raw?.valor_plano,
+    descricaoPlano: raw?.descricaoPlano ?? raw?.descricao_plano,
+    codMatricula: raw?.codMatricula ?? raw?.cod_matricula,
+    dataInicio: raw?.dataInicio ?? raw?.data_inicio,
+    dataFim: raw?.dataFim ?? raw?.data_fim,
+    statusMatricula: raw?.statusMatricula ?? raw?.status_matricula,
+    formaPagamento: raw?.formaPagamento ?? raw?.forma_pagamento,
+    valorFinal: raw?.valorFinal ?? raw?.valor_final,
+});
+
 // Classe responsável por fazer requisições à API - aluno
 class AlunoRequests {
     private serverURL;
@@ -76,29 +101,7 @@ class AlunoRequests {
 
             if (respostaAPI.ok) {
                 const raw = await respostaAPI.json();
-                const aluno: AlunoDTO = {
-                    idAluno: raw.id_aluno,
-                    codAluno: raw.cod_aluno,
-                    nome: raw.nome,
-                    sobrenome: raw.sobrenome,
-                    cpf: raw.cpf,
-                    dataNascimento: raw.data_nascimento,
-                    celular: raw.celular,
-                    statusAluno: raw.status_aluno,
-                    endereco: raw.endereco,
-                    email: raw.email,
-                    codPlano: raw.cod_plano,
-                    tipoPlano: raw.tipo_plano,
-                    duracaoDias: raw.duracao_dias,
-                    valorPlano: raw.valor_plano,
-                    descricaoPlano: raw.descricao_plano,
-                    codMatricula: raw.cod_matricula,
-                    dataInicio: raw.data_inicio,
-                    dataFim: raw.data_fim,
-                    statusMatricula: raw.status_matricula,
-                    formaPagamento: raw.forma_pagamento,
-                    valorFinal: raw.valor_final
-                };
+                const aluno = normalizarAlunoDetalhes(raw);
                 return aluno;
             } else {
                 throw new Error("Não foi possível buscar o aluno.");

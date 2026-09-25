@@ -1,7 +1,7 @@
 import { type JSX } from "react";
 import { useState, useEffect } from "react";
 import AlunoRequests from "../../../fetch/AlunoRequests";
-import type {AlunoDTO} from "../../../dto/AlunoDTO";
+import type { AlunoDTO } from "../../../dto/AlunoDTO";
 import { useNavigate } from "react-router-dom";
 
 function ListagemAlunos(): JSX.Element {
@@ -24,7 +24,7 @@ function ListagemAlunos(): JSX.Element {
         buscarAlunos();
     }, []);
 
-     const alunosFiltrados = alunos
+    const alunosFiltrados = alunos
         .filter((a) =>
             `${ a.nome } ${ a.sobrenome } ${ a.email } ${ a.celular } ${ a.codAluno }`
                 .toLowerCase()
