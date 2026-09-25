@@ -1,6 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import AlunoRequests from "../../../fetch/AlunoRequests";
+import MatriculaRequests from "../../../fetch/MatriculaRequests";
 import type {AlunoDTO} from "../../../dto/AlunoDTO";
 
 interface DetalhesAlunoProps {
@@ -25,11 +26,71 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
             setError(null);
             try {
                 const dados = await AlunoRequests.obterAlunoPorId(id_aluno);
-                if (dados) {
-                    setAluno(dados);
-                } else {
+
+                if (!dados) {
                     setError("Aluno não encontrado.");
+                    return;
                 }
+
+                const alunosDaLista = await AlunoRequests.obterListaDeAlunos();
+                const ordemAluno = alunosDaLista
+                    .sort((a, b) => Number(a.idAluno ?? 0) - Number(b.idAluno ?? 0))
+                    .findIndex((aluno) => Number(aluno.idAluno ?? 0) === Number(dados.idAluno ?? 0));
+
+                const matriculas = await MatriculaRequests.obterListaDeMatriculas();
+                const idsAluno = [
+                    Number(id_aluno),
+                    Number(dados.idAluno ?? 0),
+                    Number(dados.id_aluno ?? 0),
+                    Number((dados as any).idAlunoSistema ?? 0),
+                ].filter((valor) => !Number.isNaN(valor) && valor > 0);
+
+                const codigoMatriculaAluno = String(
+                    dados.codMatricula ?? (dados as any).cod_matricula ?? ''
+                ).trim().toLowerCase();
+
+                const idMatriculaAluno = Number(
+                    (dados as any).idMatricula ?? (dados as any).id_matricula ?? 0
+                );
+
+                const matriculaAluno =
+                    matriculas.find((matricula) =>
+                        idsAluno.includes(Number((matricula as any).id_aluno ?? (matricula as any).idAluno ?? 0))
+                    ) ??
+                    matriculas.find((matricula) =>
+                        Number((matricula as any).id_matricula ?? (matricula as any).idMatricula ?? 0) === idMatriculaAluno
+                    ) ??
+                    matriculas.find((matricula) =>
+                        String((matricula as any).cod_matricula ?? (matricula as any).codMatricula ?? '').trim().toLowerCase() === codigoMatriculaAluno
+                    ) ??
+                    matriculas.find((matricula) =>
+                        Number((matricula as any).id_aluno ?? (matricula as any).idAluno ?? 0) === Number(dados.id_aluno ?? dados.idAluno ?? 0)
+                    );
+
+                const valorDaMatricula = Number(
+                    (dados.valorFinal && dados.valorFinal !== 0) ? dados.valorFinal :
+                    (dados as any).valor_final ??
+                    (dados as any).valor ??
+                    matriculaAluno?.valor_final ??
+                    0
+                );
+                const formaPagamento = String(
+                    (dados.formaPagamento && dados.formaPagamento !== '—') ? dados.formaPagamento :
+                    (dados as any).forma_pagamento ??
+                    (dados as any).formaPagamento ??
+                    matriculaAluno?.forma_pagamento ??
+                    matriculaAluno?.formaPagamento ??
+                    '—'
+                );
+
+                const alunoComPagamento = {
+                    ...dados,
+                    displayId: ordemAluno >= 0 ? ordemAluno + 1 : undefined,
+                    valorFinal: valorDaMatricula,
+                    formaPagamento: formaPagamento === 'undefined' || !formaPagamento || formaPagamento === '—' ? '—' : formaPagamento,
+                };
+
+                setAluno(alunoComPagamento);
             } catch (err) {
                 console.error("Erro ao carregar detalhes do aluno:", err);
                 setError("Ocorreu um erro ao buscar as informações do aluno.");
@@ -150,7 +211,7 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
                             </div>
 
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                                <Campo label="ID do Sistema" valor={String(aluno.idAluno ?? "—")} icone="pi-hashtag" />
+                                <Campo label="ID do Sistema" valor={String(aluno.displayId ?? 1)} icone="pi-hashtag" />
                                 <Campo label="CPF" valor={aluno.cpf ?? "Não informado"} icone="pi-file" />
                                 <Campo label="Data de Nascimento" valor={formatarData(aluno.dataNascimento)} icone="pi-calendar" />
                             </div>
@@ -195,30 +256,6 @@ function DetalhesAluno({ id_aluno }: DetalhesAlunoProps): JSX.Element {
                                 <Campo label="Celular / Telefone" valor={aluno.celular ?? "Não informado"} icone="pi-phone" />
                                 <div style={{ gridColumn: "1 / -1" }}>
                                     <Campo label="Endereço Residencial" valor={aluno.endereco ?? "Não informado"} icone="pi-home" />
-                                    {/* Card do Plano */}
-                                    <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #f0f0f0", padding: "24px" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-                                            <div style={{ width: "28px", height: "28px", borderRadius: "8px", backgroundColor: "#ff7300", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <i className="pi pi-credit-card" style={{ color: "#ffffff", fontSize: "0.75rem" }} />
-                                            </div>
-                                            <h3 style={{ fontSize: "0.875rem", fontWeight: "bold", color: "#000000", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>Plano Atual</h3>
-                                        </div>
-
-                                        {aluno.tipoPlano ? (
-                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                                                <Campo label="Plano" valor={aluno.tipoPlano} icone="pi-tag" />
-                                                <Campo label="Código da Matrícula" valor={aluno.codMatricula ?? "—"} icone="pi-hashtag" />
-                                                <Campo label="Início" valor={formatarData(aluno.dataInicio!)} icone="pi-calendar" />
-                                                <Campo label="Vencimento" valor={formatarData(aluno.dataFim!)} icone="pi-calendar-times" />
-                                                <Campo label="Valor" valor={aluno.valorFinal ? `R$ ${Number(aluno.valorFinal).toFixed(2)}` : "—"} icone="pi-dollar" />
-                                                <Campo label="Forma de Pagamento" valor={aluno.formaPagamento ?? "—"} icone="pi-wallet" />
-                                            </div>
-                                        ) : (
-                                            <div style={{ padding: "16px", borderRadius: "10px", backgroundColor: "#f9f9f9", textAlign: "center" }}>
-                                                <span style={{ fontSize: "0.875rem", color: "#999999" }}>Nenhum plano ativo no momento.</span>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
                         </div>

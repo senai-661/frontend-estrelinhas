@@ -27,7 +27,7 @@ function ListagemAlunos(): JSX.Element {
         buscarAlunos();
     }, []);
 
-    // Ordena os alunos pelo ID real do banco
+    // Ordena os alunos e usa a posição da lista como identificador visual
     const alunosFiltrados = alunos
         .filter((a) =>
             `${a.nome} ${a.sobrenome} ${a.email} ${a.celular} ${a.codAluno}`
@@ -36,7 +36,7 @@ function ListagemAlunos(): JSX.Element {
         )
         .sort(
             (a, b) =>
-                Number(a.idAluno) - Number(b.idAluno)
+                Number(a.idAluno ?? 0) - Number(b.idAluno ?? 0)
         );
 
     const totalPages = Math.ceil(
@@ -205,12 +205,9 @@ function ListagemAlunos(): JSX.Element {
                                                 "#fff")
                                         }
                                     >
-                                        {/* ID */}
+                                        {/* ID de exibição da lista */}
                                         <td style={tdStyle}>
-                                            #
-                                            {indexOfFirstRow +
-                                                index +
-                                                1}
+                                            #{indexOfFirstRow + index + 1}
                                         </td>
 
                                         {/* RA */}

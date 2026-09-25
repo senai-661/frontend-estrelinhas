@@ -23,4 +23,5 @@ export interface AlunoDTO {
     statusMatricula?: string;
     formaPagamento?: string;
     valorFinal?: number;
+    displayId?: number;
 }

@@ -90,14 +90,14 @@ class AlunoRequests {
                     codPlano: raw.cod_plano,
                     tipoPlano: raw.tipo_plano,
                     duracaoDias: raw.duracao_dias,
-                    valorPlano: raw.valor_plano,
-                    descricaoPlano: raw.descricao_plano,
+                    valorPlano: raw.valor_plano ?? raw.valor,
+                    descricaoPlano: raw.descricao_plano ?? raw.descricao,
                     codMatricula: raw.cod_matricula,
                     dataInicio: raw.data_inicio,
                     dataFim: raw.data_fim,
                     statusMatricula: raw.status_matricula,
-                    formaPagamento: raw.forma_pagamento,
-                    valorFinal: raw.valor_final
+                    formaPagamento: raw.forma_pagamento ?? raw.formaPagamento,
+                    valorFinal: raw.valor_final ?? raw.valorFinal ?? Number(raw.valor ?? 0)
                 };
                 return aluno;
             } else {
