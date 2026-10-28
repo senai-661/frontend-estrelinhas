@@ -21,7 +21,7 @@ class AuthRequests {
      * @param login - email e senha
      * @returns true caso sucesso, false caso erro
      */
-   async login(login: { email: string, senha: string }) {       
+   async login(login: { email: string, senha: string }) {
     try {
         const response = await fetch(`${this.serverUrl}${this.endpointLogin}`, {
             method: 'POST',
@@ -31,21 +31,35 @@ class AuthRequests {
             body: JSON.stringify(login)
         });
 
+        const data = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            throw new Error('Erro na requisição');
+            throw new Error(data.message || data.error || `Erro do servidor (${response.status})`);
         }
 
-        const data = await response.json();
+        const auth = data.auth ?? data.autenticado ?? data.success ?? false;
+        const token = data.token ?? data.accessToken ?? '';
+        const usuario = data.usuario ?? data.user ?? data.usuarioLogado ?? {
+            nome: data.nome,
+            email: data.email,
+            id_usuario: data.id_usuario ?? data.idUsuario ?? data.id,
+            id_aluno: data.id_aluno ?? data.idAluno,
+            role: data.role,
+        };
 
-        if (!data.auth) {
-            throw new Error(data.message || 'Email ou senha incorretos');
+        if (!auth) {
+            throw new Error(data.message || data.error || 'Email ou senha incorretos');
         }
 
-        console.log('Dados do usuário:', data.usuario); 
-                                                                            
-        this.persistToken(data.token, data.usuario, data.auth);
+        if (!token) {
+            throw new Error('Resposta do servidor sem token de autenticação.');
+        }
 
-        return data.auth;
+        console.log('Dados do usuário:', usuario);
+
+        this.persistToken(token, usuario, auth);
+
+        return auth;
 
     } catch (error) {
         console.error('Erro: ', error);
@@ -57,22 +71,22 @@ class AuthRequests {
      * Persiste o token no localStorage
      */
     persistToken(
-        token: string, 
-        usuario: any, 
+        token: string,
+        usuario: Record<string, any> | null,
         isAuth: boolean
     ) {
         localStorage.setItem('token', token);
-        localStorage.setItem('nome', usuario.nome);
 
-        // suporta id_usuario ou id_aluno
-        const id = usuario.id_usuario || usuario.id_aluno;
+        const safeUsuario = usuario ?? {};
+        const nome = safeUsuario.nome ?? localStorage.getItem('nome') ?? '';
+        const email = safeUsuario.email ?? localStorage.getItem('email') ?? '';
+        const id = safeUsuario.id_usuario ?? safeUsuario.id_aluno ?? localStorage.getItem('idUsuario') ?? '';
+        const role = safeUsuario.role ?? localStorage.getItem('role') ?? 'aluno';
+
+        localStorage.setItem('nome', nome);
         localStorage.setItem('idUsuario', id ? id.toString() : '');
-
-        localStorage.setItem('email', usuario.email);
-
-        // fallback caso não tenha role
-        localStorage.setItem('role', usuario.role || 'aluno');
-
+        localStorage.setItem('email', email);
+        localStorage.setItem('role', role);
         localStorage.setItem('isAuth', isAuth.toString());
     }
 

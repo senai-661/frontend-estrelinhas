@@ -4,6 +4,14 @@ function Rodape(): JSX.Element {
     return (
         <footer style={{ backgroundColor: "#ff7300", height: "8vh", display: "flex", alignItems: "center", justifyContent: "space-around" }}>
             <p style={{ color: "#ffffff", fontSize: "1.25rem" }}>Copyright - Todos os direitos e esquerdos reservados</p>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            <p style={{ color: "#ffffff", fontSize: "1.25rem" }}>Marianna Monari</p>
+=======
+        
+>>>>>>> lais-zanqueta
+>>>>>>> features
         </footer>
     );
 }

@@ -26,7 +26,11 @@ function ListagemAlunos(): JSX.Element {
 
     const alunosFiltrados = alunos
         .filter((a) =>
+<<<<<<< HEAD
             `${ a.nome } ${ a.sobrenome } ${ a.email } ${ a.celular } ${ a.codAluno }`
+=======
+            `${a.nome} ${a.sobrenome} ${a.email} ${a.celular} ${a.codAluno}`
+>>>>>>> features
                 .toLowerCase()
                 .includes(busca.toLowerCase())
         )
