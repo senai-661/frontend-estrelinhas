@@ -1,10 +1,12 @@
 import { useState, useEffect, type JSX } from "react";
 import MatriculaRequests from "../../../fetch/MatriculaRequests";
+import AlunoRequests from "../../../fetch/AlunoRequests";
 import type { MatriculaDTO } from "../../../dto/MatriculaDTO";
 import { useNavigate } from "react-router-dom";
 
 function ListagemMatriculas(): JSX.Element {
     const [matriculas, setMatriculas] = useState<MatriculaDTO[]>([]);
+    const [nomesAlunos, setNomesAlunos] = useState<Record<number, string>>({});
     const [busca, setBusca] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5;
@@ -13,9 +15,21 @@ function ListagemMatriculas(): JSX.Element {
     useEffect(() => {
         const buscarMatriculas = async () => {
             try {
-                const lista = await MatriculaRequests.obterListaDeMatriculas();
-            
-                setMatriculas(Array.isArray(lista) ? lista : []);
+                const [listaMatriculas, listaAlunos] = await Promise.all([
+                    MatriculaRequests.obterListaDeMatriculas(),
+                    AlunoRequests.obterListaDeAlunos(),
+                ]);
+                setMatriculas(Array.isArray(listaMatriculas) ? listaMatriculas : []);
+                setNomesAlunos(
+                    Object.fromEntries(
+                        listaAlunos
+                            .filter((aluno) => aluno.idAluno !== undefined)
+                            .map((aluno) => [
+                                aluno.idAluno!,
+                                `${aluno.nome} ${aluno.sobrenome}`.trim(),
+                            ])
+                    )
+                );
             } catch (error) {
                 console.error(`Erro ao buscar matrículas. ${error}`);
                 alert("Erro ao criar a listagem de matrículas.");
@@ -25,7 +39,7 @@ function ListagemMatriculas(): JSX.Element {
     }, []);
 
     const matriculasFiltradas = matriculas.filter((m) =>
-        `${m.cod_matricula} ${m.status_matricula} ${m.forma_pagamento}`
+        `${m.cod_matricula} ${nomesAlunos[m.id_aluno] ?? ""} ${m.status_matricula} ${m.forma_pagamento}`
             .toLowerCase()
             .includes(busca.toLowerCase())
     );
@@ -95,7 +109,7 @@ function ListagemMatriculas(): JSX.Element {
                     type="text"
                     value={busca}
                     onChange={handleBusca}
-                    placeholder="Buscar por código, status ou pagamento..."
+                    placeholder="                    Buscar por código, aluno, status ou pagamento..."
                     style={{
                         padding: '10px 16px',
                         borderRadius: '999px',
@@ -113,7 +127,7 @@ function ListagemMatriculas(): JSX.Element {
                     <thead>
                         <tr>
                             <th style={thStyle}>Cód. Matrícula</th>
-                            <th style={thStyle}>Vigência</th>
+                            <th style={thStyle}>Aluno</th>
                             <th style={thStyle}>Valor Final</th>
                             <th style={thStyle}>Forma Pgto.</th>
                             <th style={thStyle}>Status</th>
@@ -130,7 +144,7 @@ function ListagemMatriculas(): JSX.Element {
                                 >
                                     <td style={tdStyle}>{matricula.cod_matricula ?? '—'}</td>
                                     <td style={tdStyle}>
-                                        {formatarData(matricula.data_inicio)} → {formatarData(matricula.data_fim)}
+                                        {nomesAlunos[matricula.id_aluno] ?? `Aluno #${matricula.id_aluno}`}
                                     </td>
                                     <td style={{ ...tdStyle, fontWeight: 700 }}>
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(matricula.valor_final)}

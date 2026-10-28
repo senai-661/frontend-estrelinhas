@@ -2,11 +2,11 @@ import type { PlanoDTO } from "../dto/PlanoDTO";
 
 function mapearPlano(item: any): PlanoDTO {
     return {
-        cod_plano:    item.codPlano   ?? item.cod_plano,
-        tipo_plano:   item.tipoPlano  ?? item.tipo_plano,
+        cod_plano: item.codPlano ?? item.cod_plano,
+        tipo_plano: item.tipoPlano ?? item.tipo_plano,
         duracao_dias: item.duracaoDias ?? item.duracao_dias ?? 0,
-        valor:        parseFloat(item.valor),
-        descricao:    item.descricao,
+        valor: parseFloat(item.valor),
+        descricao: item.descricao,
         status_plano: item.statusPlano ?? item.status_plano,
     };
 
@@ -23,7 +23,7 @@ class PlanoRequests {
     }
 
     async obterListaDePlanos(): Promise<PlanoDTO[]> {
-        const token = localStorage.getItem('token'); 
+        const token = localStorage.getItem('token');
         const respostaAPI = await fetch(`${this.serverURL}${this.endpointPlano}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -61,6 +61,28 @@ class PlanoRequests {
             const token = localStorage.getItem('token');
             const respostaAPI = await fetch(`${this.serverURL}${this.endpointPlano}`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': `${token}`
+                },
+                body: JSON.stringify(formPlano)
+            });
+
+            if (!respostaAPI.ok) throw new Error(`Erro ${respostaAPI.status}: ${respostaAPI.statusText}`);
+
+            console.info(`${respostaAPI.status}: ${respostaAPI.statusText}`);
+            return true;
+        } catch (error) {
+            console.error(`Erro ao fazer consulta à API. ${error}`);
+            return false;
+        }
+    }
+
+    async atualizarPlano(id: number, formPlano: PlanoDTO): Promise<boolean> {
+        try {
+            const token = localStorage.getItem('token');
+            const respostaAPI = await fetch(`${this.serverURL}${this.endpointPlano}/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-access-token': `${token}`
