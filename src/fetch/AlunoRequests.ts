@@ -9,38 +9,38 @@ class AlunoRequests {
         this.endpointAluno = `/api/alunos`;
     }
 
-   async obterListaDeAlunos(): Promise<AlunoDTO[]> {
-    try {
-        const token = localStorage.getItem('token');
-        const respostaAPI = await fetch(`${this.serverURL}${this.endpointAluno}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': `${token}`
-            }
-        });
+    async obterListaDeAlunos(): Promise<AlunoDTO[]> {
+        try {
+            const token = localStorage.getItem('token');
+            const respostaAPI = await fetch(`${this.serverURL}${this.endpointAluno}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': `${token}`
+                }
+            });
 
-        if (respostaAPI.ok) {
-            const lista = await respostaAPI.json();
-            return lista.map((raw: any) => ({
-                idAluno: raw.idAluno ?? raw.id_aluno,
-                codAluno: raw.codAluno ?? raw.cod_aluno,
-                nome: raw.nome,
-                sobrenome: raw.sobrenome,
-                cpf: raw.cpf,
-                dataNascimento: raw.dataNascimento ?? raw.data_nascimento,
-                celular: raw.celular,
-                statusAluno: raw.statusAluno ?? raw.status_aluno,
-                endereco: raw.endereco,
-                email: raw.email,
-            }));
-        } else {
-            throw new Error("Não foi possível listar os alunos.");
+            if (respostaAPI.ok) {
+                const lista = await respostaAPI.json();
+                return lista.map((raw: any) => ({
+                    idAluno: raw.idAluno ?? raw.id_aluno,
+                    codAluno: raw.codAluno ?? raw.cod_aluno,
+                    nome: raw.nome,
+                    sobrenome: raw.sobrenome,
+                    cpf: raw.cpf,
+                    dataNascimento: raw.dataNascimento ?? raw.data_nascimento,
+                    celular: raw.celular,
+                    statusAluno: raw.statusAluno ?? raw.status_aluno,
+                    endereco: raw.endereco,
+                    email: raw.email,
+                }));
+            } else {
+                throw new Error("Não foi possível listar os alunos.");
+            }
+        } catch (error) {
+            console.error(`Erro ao fazer a consulta de alunos. ${error}`);
+            return [];
         }
-    } catch (error) {
-        console.error(`Erro ao fazer a consulta de alunos. ${error}`);
-        return [];
     }
-}
 
     async enviarFormularioAluno(formAluno: AlunoDTO): Promise<boolean> {
         try {
@@ -81,6 +81,7 @@ class AlunoRequests {
                     codAluno: raw.codAluno ?? raw.cod_aluno,
                     nome: raw.nome,
                     sobrenome: raw.sobrenome,
+                    cpf: raw.cpf,
                     dataNascimento: raw.dataNascimento ?? raw.data_nascimento,
                     celular: raw.celular,
                     statusAluno: raw.statusAluno ?? raw.status_aluno,
@@ -107,6 +108,27 @@ class AlunoRequests {
             return;
         }
     }
-}
 
+    async atualizarAluno(id: number, formAluno: AlunoDTO): Promise<boolean> {
+        try {
+            const token = localStorage.getItem('token');
+            const respostaAPI = await fetch(`${this.serverURL}${this.endpointAluno}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': `${token}`
+                },
+                body: JSON.stringify(formAluno)
+            });
+
+            if (!respostaAPI.ok) throw new Error(`Erro ${respostaAPI.status}: ${respostaAPI.statusText}`);
+
+            console.info(`${respostaAPI.status}: ${respostaAPI.statusText}`);
+            return true;
+        } catch (error) {
+            console.error(`Erro ao fazer consulta à API. ${error}`);
+            return false;
+        }
+    } 
+}
 export default new AlunoRequests;

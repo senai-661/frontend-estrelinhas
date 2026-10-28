@@ -1,12 +1,16 @@
 import { useState, useEffect, type JSX } from "react";
 import MatriculaRequests from "../../../fetch/MatriculaRequests";
 import AlunoRequests from "../../../fetch/AlunoRequests";
+<<<<<<< HEAD
 import PlanoRequests from "../../../fetch/PlanoRequests";
+=======
+>>>>>>> lais-zanqueta
 import type { MatriculaDTO } from "../../../dto/MatriculaDTO";
 import { useNavigate } from "react-router-dom";
 
 function ListagemMatriculas(): JSX.Element {
     const [matriculas, setMatriculas] = useState<MatriculaDTO[]>([]);
+    const [nomesAlunos, setNomesAlunos] = useState<Record<number, string>>({});
     const [busca, setBusca] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5;
@@ -15,6 +19,7 @@ function ListagemMatriculas(): JSX.Element {
     useEffect(() => {
         const buscarMatriculas = async () => {
             try {
+<<<<<<< HEAD
                 const [lista, alunos, planos] = await Promise.all([
                     MatriculaRequests.obterListaDeMatriculas(),
                     AlunoRequests.obterListaDeAlunos(),
@@ -40,6 +45,23 @@ function ListagemMatriculas(): JSX.Element {
                 }));
 
                 setMatriculas(matriculasComNomes);
+=======
+                const [listaMatriculas, listaAlunos] = await Promise.all([
+                    MatriculaRequests.obterListaDeMatriculas(),
+                    AlunoRequests.obterListaDeAlunos(),
+                ]);
+                setMatriculas(Array.isArray(listaMatriculas) ? listaMatriculas : []);
+                setNomesAlunos(
+                    Object.fromEntries(
+                        listaAlunos
+                            .filter((aluno) => aluno.idAluno !== undefined)
+                            .map((aluno) => [
+                                aluno.idAluno!,
+                                `${aluno.nome} ${aluno.sobrenome}`.trim(),
+                            ])
+                    )
+                );
+>>>>>>> lais-zanqueta
             } catch (error) {
                 console.error(`Erro ao buscar matrículas. ${error}`);
                 alert("Erro ao criar a listagem de matrículas.");
@@ -49,7 +71,7 @@ function ListagemMatriculas(): JSX.Element {
     }, []);
 
     const matriculasFiltradas = matriculas.filter((m) =>
-        `${m.cod_matricula} ${m.status_matricula} ${m.forma_pagamento}`
+        `${m.cod_matricula} ${nomesAlunos[m.id_aluno] ?? ""} ${m.status_matricula} ${m.forma_pagamento}`
             .toLowerCase()
             .includes(busca.toLowerCase())
     );
@@ -119,7 +141,7 @@ function ListagemMatriculas(): JSX.Element {
                     type="text"
                     value={busca}
                     onChange={handleBusca}
-                    placeholder="Buscar por código, status ou pagamento..."
+                    placeholder="                    Buscar por código, aluno, status ou pagamento..."
                     style={{
                         padding: '10px 16px',
                         borderRadius: '999px',
@@ -138,7 +160,12 @@ function ListagemMatriculas(): JSX.Element {
                         <tr>
                             <th style={thStyle}>Cód. Matrícula</th>
                             <th style={thStyle}>Aluno</th>
+<<<<<<< HEAD
                             <th style={thStyle}>Plano</th>
+=======
+                            <th style={thStyle}>Valor Final</th>
+                            <th style={thStyle}>Forma Pgto.</th>
+>>>>>>> lais-zanqueta
                             <th style={thStyle}>Status</th>
                             <th style={{ ...thStyle, textAlign: 'center' }}>Ações</th>
                         </tr>
@@ -152,8 +179,18 @@ function ListagemMatriculas(): JSX.Element {
                                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#fff')}
                                 >
                                     <td style={tdStyle}>{matricula.cod_matricula ?? '—'}</td>
+<<<<<<< HEAD
                                     <td style={tdStyle}>{matricula.nome_aluno ?? '—'}</td>
                                     <td style={tdStyle}>{matricula.nome_plano ?? '—'}</td>
+=======
+                                    <td style={tdStyle}>
+                                        {nomesAlunos[matricula.id_aluno] ?? `Aluno #${matricula.id_aluno}`}
+                                    </td>
+                                    <td style={{ ...tdStyle, fontWeight: 700 }}>
+                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(matricula.valor_final)}
+                                    </td>
+                                    <td style={tdStyle}>{matricula.forma_pagamento ?? '—'}</td>
+>>>>>>> lais-zanqueta
                                     <td style={tdStyle}>
                                         <span style={{
                                             backgroundColor: (matricula.status_matricula?.toUpperCase() === 'ATIVA' || matricula.status_matricula?.toUpperCase() === 'ATIVO') ? '#dcfce7' : '#fee2e2',
