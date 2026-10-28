@@ -1,4 +1,5 @@
 import type { AlunoDTO } from "../dto/AlunoDTO";
+import { API_URL } from '../config/api';
 
 export const normalizarAlunoDetalhes = (raw: any): AlunoDTO => ({
     idAluno: raw?.idAluno ?? raw?.id_aluno ?? raw?.id,
@@ -30,7 +31,7 @@ class AlunoRequests {
     private endpointAluno;
 
     constructor() {
-        this.serverURL = `http://localhost:3333`;
+        this.serverURL = API_URL;
         this.endpointAluno = `/api/alunos`;
     }
 

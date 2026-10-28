@@ -26,3 +26,11 @@ dist-ssr
 vite-env.d.ts
 
 global.d.ts
+
+# Configurações de ambiente
+.env
+.env.*
+!.env.example
+
+# Configuração local da Vercel
+.vercel

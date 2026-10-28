@@ -1,4 +1,5 @@
 import { MatriculaDTO } from "../dto/MatriculaDTO";
+import { API_URL } from '../config/api';
 
 // Função auxiliar para mapear o objeto do backend para o DTO
 function mapearMatricula(item: any): MatriculaDTO {
@@ -19,7 +20,7 @@ class MatriculaRequests {
     private endpointMatricula;
 
     constructor() {
-        this.serverURL = `http://localhost:3333`;
+        this.serverURL = API_URL;
         this.endpointMatricula = `/api/matriculas`;
     }
 

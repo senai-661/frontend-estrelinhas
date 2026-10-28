@@ -1,4 +1,5 @@
 import type { PlanoDTO } from "../dto/PlanoDTO";
+import { API_URL } from '../config/api';
 
 function mapearPlano(item: any): PlanoDTO {
     return {
@@ -18,7 +19,7 @@ class PlanoRequests {
     private endpointPlano;
 
     constructor() {
-        this.serverURL = `http://localhost:3333`;
+        this.serverURL = API_URL;
         this.endpointPlano = `/api/planos`;
     }
 
