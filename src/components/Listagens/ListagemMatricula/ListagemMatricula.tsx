@@ -1,10 +1,6 @@
 import { useState, useEffect, type JSX } from "react";
 import MatriculaRequests from "../../../fetch/MatriculaRequests";
 import AlunoRequests from "../../../fetch/AlunoRequests";
-<<<<<<< HEAD
-import PlanoRequests from "../../../fetch/PlanoRequests";
-=======
->>>>>>> lais-zanqueta
 import type { MatriculaDTO } from "../../../dto/MatriculaDTO";
 import { useNavigate } from "react-router-dom";
 
@@ -19,33 +15,6 @@ function ListagemMatriculas(): JSX.Element {
     useEffect(() => {
         const buscarMatriculas = async () => {
             try {
-<<<<<<< HEAD
-                const [lista, alunos, planos] = await Promise.all([
-                    MatriculaRequests.obterListaDeMatriculas(),
-                    AlunoRequests.obterListaDeAlunos(),
-                    PlanoRequests.obterListaDePlanos(),
-                ]);
-
-                const alunosPorId = new Map<string, string>();
-                alunos.forEach((aluno) => {
-                    const nome = `${aluno.nome} ${aluno.sobrenome}`.trim();
-                    if (aluno.idAluno !== undefined) alunosPorId.set(String(aluno.idAluno), nome);
-                    if (aluno.codAluno) alunosPorId.set(String(aluno.codAluno), nome);
-                });
-
-                const planosPorId = new Map<string, string>();
-                planos.forEach((plano) => {
-                    planosPorId.set(String(plano.cod_plano), plano.tipo_plano);
-                });
-
-                const matriculasComNomes = (Array.isArray(lista) ? lista : []).map((matricula) => ({
-                    ...matricula,
-                    nome_aluno: matricula.nome_aluno ?? alunosPorId.get(String(matricula.id_aluno)),
-                    nome_plano: matricula.nome_plano ?? planosPorId.get(String(matricula.id_plano)),
-                }));
-
-                setMatriculas(matriculasComNomes);
-=======
                 const [listaMatriculas, listaAlunos] = await Promise.all([
                     MatriculaRequests.obterListaDeMatriculas(),
                     AlunoRequests.obterListaDeAlunos(),
@@ -61,7 +30,6 @@ function ListagemMatriculas(): JSX.Element {
                             ])
                     )
                 );
->>>>>>> lais-zanqueta
             } catch (error) {
                 console.error(`Erro ao buscar matrículas. ${error}`);
                 alert("Erro ao criar a listagem de matrículas.");
@@ -160,12 +128,8 @@ function ListagemMatriculas(): JSX.Element {
                         <tr>
                             <th style={thStyle}>Cód. Matrícula</th>
                             <th style={thStyle}>Aluno</th>
-<<<<<<< HEAD
-                            <th style={thStyle}>Plano</th>
-=======
                             <th style={thStyle}>Valor Final</th>
                             <th style={thStyle}>Forma Pgto.</th>
->>>>>>> lais-zanqueta
                             <th style={thStyle}>Status</th>
                             <th style={{ ...thStyle, textAlign: 'center' }}>Ações</th>
                         </tr>
@@ -179,10 +143,6 @@ function ListagemMatriculas(): JSX.Element {
                                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#fff')}
                                 >
                                     <td style={tdStyle}>{matricula.cod_matricula ?? '—'}</td>
-<<<<<<< HEAD
-                                    <td style={tdStyle}>{matricula.nome_aluno ?? '—'}</td>
-                                    <td style={tdStyle}>{matricula.nome_plano ?? '—'}</td>
-=======
                                     <td style={tdStyle}>
                                         {nomesAlunos[matricula.id_aluno] ?? `Aluno #${matricula.id_aluno}`}
                                     </td>
@@ -190,7 +150,6 @@ function ListagemMatriculas(): JSX.Element {
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(matricula.valor_final)}
                                     </td>
                                     <td style={tdStyle}>{matricula.forma_pagamento ?? '—'}</td>
->>>>>>> lais-zanqueta
                                     <td style={tdStyle}>
                                         <span style={{
                                             backgroundColor: (matricula.status_matricula?.toUpperCase() === 'ATIVA' || matricula.status_matricula?.toUpperCase() === 'ATIVO') ? '#dcfce7' : '#fee2e2',
