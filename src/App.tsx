@@ -11,6 +11,9 @@ import PDetalhesPlano from './pages/PDetalhes/PDetalhesPlano/PDetalhesPlano';
 import PCadastroAluno from './pages/PCadastro/PCadastroAluno/PCadastroAluno';
 import PCadastroPlano from './pages/PCadastro/PCadastroPlano/PCadastroPlano';
 import PCadastroMatricula from './pages/PCadastro/PCadastroMatricula/PCadastroMatricula';
+import PAtualizarAluno from './pages/PAtualizar/PAtualizarAluno/PAtualizarAluno';
+import PAtualizarPlano from './pages/PAtualizar/PAtualizarPlano/PAtualizarPlano';
+import PAtualizarMatricula from './pages/PAtualizar/PAtualizarMatricula/PAtualizarMatricula';
 import { type JSX } from 'react';
 
 
@@ -50,6 +53,15 @@ function App() {
                 } />
                 <Route path='/cadastro/matricula' element={
                     <ProtectedRoute element={PCadastroMatricula} />
+                } />
+                <Route path='/atualizar/aluno/:id_aluno' element={
+                    <ProtectedRoute element={PAtualizarAluno} />
+                } />
+                <Route path='/atualizar/plano/:id_plano' element={
+                    <ProtectedRoute element={PAtualizarPlano} />
+                } />
+                <Route path='/atualizar/matricula/:id_matricula' element={
+                    <ProtectedRoute element={PAtualizarMatricula} />
                 } />
 
             </Routes>

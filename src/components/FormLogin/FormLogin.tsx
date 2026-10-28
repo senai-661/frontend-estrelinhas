@@ -5,6 +5,7 @@ import AuthRequests from '../../fetch/AuthRequests';
 function LoginForm(): JSX.Element {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [errorMensagem, setErrorMensagem] = useState<string | null>(null);
 
     interface LoginData {
         email: string;
@@ -17,17 +18,23 @@ function LoginForm(): JSX.Element {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const login: LoginData = { email: email, senha: senha }
+        setErrorMensagem(null);
 
-  
+        const login: LoginData = { email: email.trim(), senha: senha.trim() };
+
+        if (!login.email || !login.senha) {
+            setErrorMensagem('Informe e-mail e senha para continuar.');
+            return;
+        }
+
         try {
             if (await AuthRequests.login(login)) {
-                window.location.href = '/'; 
+                window.location.href = '/';
             }
         } catch (error) {
-           
-            console.error(`Erro ao tentar fazer login: ${error}`);
-            alert('Erro ao fazer login, verifique se usuário e/ou senha estão corretos.');
+            const message = error instanceof Error ? error.message : 'Erro ao fazer login.';
+            console.error(`Erro ao tentar fazer login: ${message}`);
+            setErrorMensagem(message || 'Erro ao fazer login, verifique se usuário e/ou senha estão corretos.');
         }
     };
 
@@ -72,6 +79,21 @@ function LoginForm(): JSX.Element {
                 </div>
 
                 
+                {errorMensagem && (
+                    <p
+                        role="alert"
+                        style={{
+                            marginTop: '1rem',
+                            color: '#d93025',
+                            fontSize: '0.9rem',
+                            minHeight: '1.2rem',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {errorMensagem}
+                    </p>
+                )}
+
                 <input
                     type="submit" 
                     value="Entrar" 
